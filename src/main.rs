@@ -1,5 +1,3 @@
-#![allow(unused)]
-
 use std::env;
 use std::process;
 
