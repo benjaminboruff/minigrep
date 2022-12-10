@@ -12,33 +12,29 @@ pub struct Config {
 
 impl Config {
     pub fn build(args: &[String]) -> Result<Config, &'static str> {
+        let query;
+        let file_path;
+        let ignore_case;
+
         if args.len() < 3 {
             return Err("not enough arguments");
         }
 
         if args[1] == "-i" || args[1] == "-s" {
-            let query = args[2].clone();
-            let file_path = args[3].clone();
-
-            let ignore_case = if args[1] == "-i" { true } else { false };
-
-            Ok(Config {
-                query,
-                file_path,
-                ignore_case,
-            })
+            query = args[2].clone();
+            file_path = args[3].clone();
+            ignore_case = if args[1] == "-i" { true } else { false };
         } else {
-            let query = args[1].clone();
-            let file_path = args[2].clone();
-
-            let ignore_case = env::var("IGNORE_CASE").is_ok();
-
-            Ok(Config {
-                query,
-                file_path,
-                ignore_case,
-            })
+            query = args[1].clone();
+            file_path = args[2].clone();
+            ignore_case = env::var("IGNORE_CASE").is_ok();
         }
+
+        Ok(Config {
+            query,
+            file_path,
+            ignore_case,
+        })
     }
 }
 
