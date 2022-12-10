@@ -16,16 +16,29 @@ impl Config {
             return Err("not enough arguments");
         }
 
-        let query = args[1].clone();
-        let file_path = args[2].clone();
+        if args[1] == "-i" || args[1] == "-s" {
+            let query = args[2].clone();
+            let file_path = args[3].clone();
 
-        let ignore_case = env::var("IGNORE_CASE").is_ok();
+            let ignore_case = if args[1] == "-i" { true } else { false };
 
-        Ok(Config {
-            query,
-            file_path,
-            ignore_case,
-        })
+            Ok(Config {
+                query,
+                file_path,
+                ignore_case,
+            })
+        } else {
+            let query = args[1].clone();
+            let file_path = args[2].clone();
+
+            let ignore_case = env::var("IGNORE_CASE").is_ok();
+
+            Ok(Config {
+                query,
+                file_path,
+                ignore_case,
+            })
+        }
     }
 }
 
