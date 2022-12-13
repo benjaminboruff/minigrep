@@ -10,11 +10,20 @@ pub struct Config {
 
 impl Config {
     pub fn build(
-        mut args: impl Iterator<Item = String>,
+        mut args: impl ExactSizeIterator<Item = String>,
     ) -> Result<Config, &'static str> {
         args.next();
+        let ignore_case;
 
-        let ignore_case = env::var("IGNORE_CASE").is_ok();
+        if args.len() == 3 {
+            ignore_case = match args.next().as_deref() {
+                Some("-i") => true,
+                Some("-s") => false,
+                _ => return Err("Unknown option flag"),
+            };
+        } else {
+            ignore_case = env::var("IGNORE_CASE").is_ok();
+        }
 
         let query = match args.next() {
             Some(arg) => arg,
@@ -25,12 +34,6 @@ impl Config {
             Some(arg) => arg,
             None => return Err("Didn't get a file path"),
         };
-
-        // if args[1] == "-i" || args[1] == "-s" {
-        //     ignore_case = if args[1] == "-i" { true } else { false };
-        // } else {
-        //     ignore_case = env::var("IGNORE_CASE").is_ok();
-        // }
 
         Ok(Config {
             query,
