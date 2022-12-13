@@ -12,6 +12,10 @@ impl Config {
     pub fn build(
         mut args: impl ExactSizeIterator<Item = String>,
     ) -> Result<Config, &'static str> {
+        if args.len() < 3 {
+            return Err("not enough arguments");
+        }
+
         args.next();
         let ignore_case;
 
