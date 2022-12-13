@@ -9,24 +9,28 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn build(args: &[String]) -> Result<Config, &'static str> {
-        let query;
-        let file_path;
-        let ignore_case;
+    pub fn build(
+        mut args: impl Iterator<Item = String>,
+    ) -> Result<Config, &'static str> {
+        args.next();
 
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
+        let ignore_case = env::var("IGNORE_CASE").is_ok();
 
-        if args[1] == "-i" || args[1] == "-s" {
-            query = args[2].clone();
-            file_path = args[3].clone();
-            ignore_case = if args[1] == "-i" { true } else { false };
-        } else {
-            query = args[1].clone();
-            file_path = args[2].clone();
-            ignore_case = env::var("IGNORE_CASE").is_ok();
-        }
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a query string"),
+        };
+
+        let file_path = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a file path"),
+        };
+
+        // if args[1] == "-i" || args[1] == "-s" {
+        //     ignore_case = if args[1] == "-i" { true } else { false };
+        // } else {
+        //     ignore_case = env::var("IGNORE_CASE").is_ok();
+        // }
 
         Ok(Config {
             query,
